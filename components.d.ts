@@ -9,6 +9,8 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    FileMangeToolbar: typeof import('./src/components/filemanges/FileMangeToolbar.vue')['default']
+    FileTypeList: typeof import('./src/components/filemanges/FileTypeList.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     HomeHeader: typeof import('./src/components/home/HomeHeader.vue')['default']
     HomeSide: typeof import('./src/components/home/HomeSide.vue')['default']
