@@ -9,7 +9,6 @@
 </template>
 
 <script lang="ts" setup>
-import FileMange from '../views/FileMange.vue'
 </script>
 
 <style lang="less" scoped>
