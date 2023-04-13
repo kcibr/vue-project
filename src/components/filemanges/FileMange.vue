@@ -10,11 +10,11 @@
       <div class="content-file">
         <div class="file-mange">
           <div class="file-path">
-            <h6>全部文件</h6>
+            <h6>全部文件{{ fileDetailVisible }}</h6>
             <el-button class="change-type" @click="openDetail" v-if="!fileDetailVisible">展开</el-button>
           </div>
           <!-- 文件列表 -->
-          <file-list/>
+          <file-list :file-details-visible="fileDetailVisible" @selected-file-change="getSelectedFile"/>
         </div>
         <div class="file-detail" v-if="fileDetailVisible">
           <el-button type="primary" @click="closeDetail">收回</el-button>
@@ -33,6 +33,12 @@ const openDetail = () => {
 }
 const closeDetail = () => {
   fileDetailVisible.value = false
+}
+const selectFiles = []
+const getSelectedFile = (val:any) => {
+  console.log('触发了')
+  console.log(typeof (val.array))
+  console.log(val.array)
 }
 </script>
 
