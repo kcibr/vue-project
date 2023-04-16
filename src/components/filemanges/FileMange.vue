@@ -5,12 +5,16 @@
 
     <div class="content">
       <!-- 工具栏 -->
-      <file-mange-toolbar :IsSelected="isSelected"/>
+      <file-mange-toolbar :isSelected="fileData.isEmpty"/>
 
       <div class="content-file">
         <div class="file-mange">
           <div class="file-path">
-            <h6>全部文件{{ fileDetailVisible }}</h6>
+              <h5 v-if="urlList.length == 1">全部文件</h5>
+              <span v-for="(item,index) in urlList" :key="index" class="f-url">
+              <span :class="(urlList.indexOf(item)+1) == urlList.length ? 'f-url-text-last' : 'f-url-text'">{{ item }}</span>
+              <span class="f-url-sep">{{ (urlList.indexOf(item)+1) == urlList.length ? '' : ' > ' }}</span>
+              </span>
             <el-button class="change-type" @click="openDetail" v-if="!fileDetailVisible">展开</el-button>
           </div>
           <!-- 文件列表 -->
@@ -25,8 +29,11 @@
 
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
-const isSelected = ref(true)
+import { computed, reactive, ref } from 'vue'
+const fileData = reactive({
+  selectedfile: [],
+  isEmpty: true
+})
 const fileDetailVisible = ref(true)
 const openDetail = () => {
   fileDetailVisible.value = true
@@ -34,11 +41,19 @@ const openDetail = () => {
 const closeDetail = () => {
   fileDetailVisible.value = false
 }
-const selectFiles = []
-const getSelectedFile = (val:any) => {
-  console.log('触发了')
-  console.log(typeof (val.array))
-  console.log(val.array)
+const urlList = computed(() => {
+  const arr:Array<string> = fpath.split('/')
+  return arr
+})
+const fpath = '全部文件/DMIZ/图片/风景/百岁山.png'
+const getSelectedFile = (val:Array<object>) => {
+  console.log(val)
+  if (val.length === 0) {
+    fileData.isEmpty = true
+  } else {
+    fileData.isEmpty = false
+  }
+  // isSelected = (val.length === 0)
 }
 </script>
 
@@ -60,9 +75,31 @@ const getSelectedFile = (val:any) => {
         height: 40px;
         width: 100%;
         display: inline-flex;
-        h6{
-          margin: 10px 0;
-          display: inline-block;
+        h5{
+          margin: 0;
+          font-size: small;
+          line-height: 40px;
+        }
+        .f-url{
+          line-height: 40px;
+          font-size: 13px;
+          color: #06a7ff;
+          .f-url-text{
+            overflow: hidden;
+            white-space: nowrap;
+            cursor: pointer;
+            text-overflow: ellipsis;
+          }
+          .f-url-text-last{
+            color: #818999;
+            cursor: auto;
+          }
+          .f-url-sep{
+            margin: 0 4px;
+            color: #c4d8f4;
+            display: inline-block;
+            vertical-align: middle;
+          }
         }
         .change-type{
           height: 30px;
@@ -73,10 +110,9 @@ const getSelectedFile = (val:any) => {
     }
     .file-detail{
       width: 248px;
-      min-width: 248px;
-      max-width: 248px;
+      position: relative;
       padding: 0 0 24px 24px;
-      border-left: 1px solid rgb(204, 204, 204);
+      border-left: 1px solid rgb(212, 212, 212);
     }
   }
 

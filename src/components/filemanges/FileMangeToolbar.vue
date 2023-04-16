@@ -1,11 +1,11 @@
 <template>
 <div class="content-top">
-  <el-button type="primary" style="border-radius:16px;" @click="selected=false" v-if="selected">上传</el-button>
-  <div class="file-tools-select" style="margin-left:30px;width:110px;" v-if="selected">
-    <el-button type="primary" text style="width:100px;"><el-icon><FolderAdd/></el-icon>&nbsp;新建文件夹</el-button>
+  <el-button type="primary" style="border-radius:16px;" v-if="props.isSelected">上传</el-button>
+  <div class="file-tools-select" style="margin-left:30px;width:110px;" v-if="props.isSelected">
+    <el-button type="primary" text style="width:100px;" ><el-icon><FolderAdd/></el-icon>&nbsp;新建文件夹</el-button>
   </div>
-  <div class="file-tools-select" v-if="!selected">
-    <el-button type="primary" text @click="selected = true"><el-icon><Download/></el-icon>&nbsp;下载</el-button>|
+  <div class="file-tools-select" v-if="!props.isSelected">
+    <el-button type="primary" text><el-icon><Download/></el-icon>&nbsp;下载</el-button>|
     <el-button type="primary" text><el-icon><Delete/></el-icon>&nbsp;删除</el-button>|
     <el-button type="primary" text><el-icon><Switch/></el-icon>&nbsp;移动</el-button>|
     <el-button type="primary" text><el-icon><DocumentCopy/></el-icon>&nbsp;复制</el-button>|
@@ -19,7 +19,7 @@
       :prefix-icon="Search"
     >
     <template #append>
-      <el-button type="primary" text>搜索</el-button>
+      <el-button type="primary" text style="background-color: rgb(240, 250, 255);">搜索</el-button>
     </template>
     </el-input>
   </div>
@@ -30,9 +30,8 @@
 import { defineProps, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 const search = ref('')
-const selected = ref(false)
 const props = defineProps({
-  isSelected: String
+  isSelected: Boolean
 })
 </script>
 
