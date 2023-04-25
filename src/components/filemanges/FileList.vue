@@ -1,7 +1,7 @@
 <template>
  <div class="file-list">
     <el-table
-      :data="tableData"
+      :data="fileList"
       stripe
       @select="getSelectionRows"
       @select-all="selectAll"
@@ -17,61 +17,54 @@
               </div>
               <!-- {{ scope.row.type }} -->
               <div class="file-name-list-a">
-                <a>{{ scope.row.name }}</a>
+                <a>{{ scope.row.fname }}</a>
               </div>
             </div>
         </template>
         </el-table-column>
         <!-- <el-table-column prop="name" label=""  style="min-width：280px;">
         </el-table-column> -->
-        <el-table-column prop="changetime" label="修改时间" sortable style="min-width：180px;"/>
+        <el-table-column prop="updatetime" label="修改时间" sortable style="min-width：180px;"/>
         <el-table-column prop="size" label="大小" sortable style="min-width：80px;"/>
     </el-table>
   </div>
     <!-- <li v-for="(item,index) in sCHData" :key="index">
-      {{ item.name }}
+      {{ item.fname }}
     </li>
     {{ selectedFiles }}|{{ sCHData.length }} -->
+    <!-- {{ fileList }} -->
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineEmits } from 'vue'
+import { ref, reactive, defineEmits, onMounted } from 'vue'
 import { autoMatchIcon } from '../../tools/file-auto-type-url'
-const tableData = [
-  {
-    changetime: '2016-05-03',
-    name: 'Tom1',
-    size: '14kb',
-    type: 'zip'
-  },
-  {
-    changetime: '2016-05-02',
-    name: 'Tom2',
-    size: '14mb',
-    type: 'txt'
-  },
-  {
-    changetime: '2016-05-04',
-    name: 'Tom3',
-    size: '2.9gb',
-    type: 'pdf'
-  },
-  {
-    changetime: '2016-05-01',
-    name: 'Tom4',
-    size: '--',
-    type: 'folder'
-  }
-]
+import { queryAllFile } from '../../api/file'
+import { useStore } from 'vuex'
+const store = useStore()
+const queryData = reactive({
+  parentDir: store.state.userfolder,
+  search: store.state.search
+})
+onMounted(() => {
+  QueryFileList()
+})
+const fileList = ref([])
+const QueryFileList = () => {
+  queryAllFile(queryData).then(res => {
+    fileList.value = res.data
+    console.log(res)
+  })
+  console.log('执行力查询文件')
+}
 const selectedFiles = reactive([])
 // 全选-全不选功能
 const selectAll = () => {
-  if (selectedFiles.length < tableData.length) {
+  if (selectedFiles.length < fileList.value.length) {
     // console.log(selectedFileTable.selectedFile.length < tableData.length)
     selectedFiles.splice(0, selectedFiles.length)
     let val:object
-    for (val of tableData) {
-      selectedFiles.push(val.name)
+    for (val of fileList.value) {
+      selectedFiles.push(val.fname)
     }
   } else {
     selectedFiles.splice(0, selectedFiles.length)
@@ -91,11 +84,6 @@ let sCHData:Array<object> = []
 const selectionChangeHandle = (val:Array<object>) => {
   sCHData = val
   emit('selected-file-change', sCHData)
-}
-// 自动匹配文件图标
-const autoIcon = (type:string) => {
-  console.log(type)
-  return autoMatchIcon(type)
 }
 </script>
 

@@ -7,17 +7,17 @@
     <div style="width:46px;">
     <el-avatar shape="circle" size="46px"  :src="autor" alt="头像" style="margin-top:10px;"/>
     </div>
-    <h5>{{ user.username }}</h5>
+    <h5>{{ store.state.user }}</h5>
     <span></span>
    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { useStore } from 'vuex'
 import autor from '../../assets/icon/原神图标.png'
-
-const user = reactive({ username: '陌栀' })
+const store = useStore()
+// const user = reactive({ username: '陌栀' })
 </script>
 
 <style lang="less" scoped>
