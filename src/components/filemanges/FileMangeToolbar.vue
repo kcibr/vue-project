@@ -38,21 +38,21 @@
     :auto-upload="false"
     :data="uploadData"
     :multiple="true"
-    :on-change="handleChange"
     :limit="9"
     list-type="picture"
+    ref="uploadRef"
   >
-    <el-button type="primary">Click to upload</el-button>
+    <el-button type="primary">选择文件</el-button>
     <template #tip>
       <div class="el-upload__tip">
-        jpg/png files with a size less than 500kb
+        文件大小不得超过1GB
       </div>
     </template>
   </el-upload>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="cancelSubmit()">取消</el-button>
-        <el-button type="primary" @click="submit()">
+        <el-button type="primary" @click="submitUpload()">
           上传
         </el-button>
       </span>
@@ -67,7 +67,7 @@ import { defineProps, reactive, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { newFolder } from '../../api/file'
 import { useStore } from 'vuex'
-import type { UploadProps, UploadUserFile } from 'element-plus'
+import type { UploadInstance, UploadProps, UploadUserFile } from 'element-plus'
 // import { ElMessageBox } from 'element-plus'
 const store = useStore()
 const search = ref('')
@@ -76,30 +76,19 @@ const props = defineProps({
 })
 // 上传文件
 const dialogVisible = ref(false)
-const fileList = ref<UploadUserFile[]>([
-  // {
-  //   name: 'food.jpeg',
-  //   url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-  // },
-  // {
-  //   name: 'food2.jpeg',
-  //   url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-  // }
-])
+const fileList = ref<UploadUserFile[]>([])
 const uploadData = ref({
   uploadFolderPath: '/Elysia',
   fileGroup: 'Elysia'
-
 })
-// const handleChange: UploadProps['onChange'] = (uploadFile, uploadFiles) => {
-//   fileList.value = fileList.value.slice(-3)
-// }
 const handleClose = (done: () => void) => {
   done()
 }
-const submit = () => {
+const uploadRef = ref<UploadInstance>()
+const submitUpload = () => {
+  uploadRef.value!.submit()
   dialogVisible.value = false
-  console.log()
+  fileList.value.length = 0
 }
 const cancelSubmit = () => {
   dialogVisible.value = false
