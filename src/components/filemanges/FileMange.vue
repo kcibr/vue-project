@@ -5,7 +5,7 @@
 
     <div class="content">
       <!-- 工具栏 -->
-      <file-mange-toolbar :isSelected="fileData.isEmpty"/>
+      <file-mange-toolbar :isSelected="fileData.isEmpty" />
 
       <div class="content-file">
         <div class="file-mange">
@@ -22,6 +22,7 @@
         </div>
         <div class="file-detail" v-if="fileDetailVisible">
           <el-button type="primary" @click="closeDetail">收回</el-button>
+          <div>{{ store.state.selectedFilelist }}</div>
         </div>
       </div>
     </div>
@@ -30,8 +31,10 @@
 </template>
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue'
+import { useStore } from 'vuex'
+const store = useStore()
 const fileData = reactive({
-  selectedfile: [],
+  selectedfile: [] as object[],
   isEmpty: true
 })
 const fileDetailVisible = ref(true)
@@ -52,6 +55,7 @@ const getSelectedFile = (val:Array<object>) => {
     fileData.isEmpty = true
   } else {
     fileData.isEmpty = false
+    fileData.selectedfile = val
   }
   // isSelected = (val.length === 0)
 }

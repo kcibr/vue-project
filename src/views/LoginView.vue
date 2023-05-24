@@ -10,28 +10,33 @@
       <el-input v-model="userData.account" />
     </el-form-item>
     <el-form-item label="密码">
-      <el-input v-model="userData.password" />
+      <el-input v-model="userData.password" type="password" />
     </el-form-item>
     <el-button type="primary" @click="Login()">Login</el-button>
   </el-form>
     </div>
+    <div>{{ store.state.userData }}</div>
 </template>
 
 <script lang="ts" setup>
 import router from '@/router'
 import { reactive } from 'vue'
 import { doLogin } from '../api/user'
-
+import { useStore } from 'vuex'
+const store = useStore()
 // 登录
 const userData = reactive({
-  account: '',
-  password: ''
+  account: 'Elysia',
+  password: '1111'
 })
 const Login = () => {
   doLogin(userData).then(res => {
     console.log(res.data)
     if (res.data != null) {
-      router.push('/')
+      store.commit('LoadUserData', res.data)
+      // console.log('vuex')
+      // console.log(store.state.userdata.nickname)
+      router.push('/home')
     }
   })
   console.log()
@@ -44,13 +49,18 @@ const Login = () => {
   width: 600px;
   height: 400px;
   border-radius: 30px;
-  background-color: #57d9e2;
+  background-color: #8beff7;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
 }
 .loginform{
-  width: 400px;
+  width: 300px;
   height: 300px;
   margin: auto;
-  margin-top: 300px;
   padding-top: 100px;
 }
 </style>>

@@ -7,9 +7,10 @@
       @select-all="selectAll"
       @selection-change="selectionChangeHandle"
       :cell-style="{ padding: '0' }"
+      max-height="750"
       style="width: 100%;">
         <el-table-column  prop="" label=""  width="30" type="selection"/>
-        <el-table-column label="文件名" prop="" width="280">
+        <el-table-column label="文件名" prop="" width="380">
         <template #default="scope">
             <div class="file-name-list">
               <div class="file-name-list-img">
@@ -36,13 +37,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, defineEmits, onMounted } from 'vue'
+import { ref, reactive, defineEmits, onMounted, computed } from 'vue'
 import { autoMatchIcon } from '../../tools/file-auto-type-url'
 import { queryAllFile } from '../../api/file'
 import { useStore } from 'vuex'
 const store = useStore()
 const queryData = reactive({
-  parentDir: store.state.userfolder,
+  parentDir: '/' + store.state.userdata.fileGroup,
   search: store.state.search
 })
 onMounted(() => {
@@ -83,6 +84,9 @@ const emit = defineEmits(['selected-file-change'])
 let sCHData:Array<object> = []
 const selectionChangeHandle = (val:Array<object>) => {
   sCHData = val
+  store.commit('updateFileList', val)
+  console.log('select')
+  console.log(store.state.selectedFilelist)
   emit('selected-file-change', sCHData)
 }
 </script>
@@ -104,6 +108,9 @@ const selectionChangeHandle = (val:Array<object>) => {
     margin-left: 20px;
     align-self: center;
     line-height: 40px;
+    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   }
 }
 </style>

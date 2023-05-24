@@ -5,7 +5,7 @@
     <el-button type="primary" text style="width:100px;" @click="createFolder()"><el-icon><FolderAdd/></el-icon>&nbsp;新建文件夹</el-button>
   </div>
   <div class="file-tools-select" v-if="!props.isSelected">
-    <el-button type="primary" text><el-icon><Download/></el-icon>&nbsp;下载</el-button>|
+    <el-button type="primary" text @click="fileDownload(store.state.selectedFilelist)"><el-icon><Download/></el-icon>&nbsp;下载</el-button>|
     <el-button type="primary" text><el-icon><Delete/></el-icon>&nbsp;删除</el-button>|
     <el-button type="primary" text><el-icon><Switch/></el-icon>&nbsp;移动</el-button>|
     <el-button type="primary" text><el-icon><DocumentCopy/></el-icon>&nbsp;复制</el-button>|
@@ -46,14 +46,16 @@
     <template #tip>
       <div class="el-upload__tip">
         文件大小不得超过1GB
+        {{ fileList }}
       </div>
     </template>
+
   </el-upload>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="cancelSubmit()">取消</el-button>
         <el-button type="primary" @click="submitUpload()">
-          上传
+          确认上传
         </el-button>
       </span>
     </template>
@@ -65,47 +67,52 @@
 <script lang="ts" setup>
 import { defineProps, reactive, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { newFolder } from '../../api/file'
+import { newFolder, fileDownload } from '../../api/file'
 import { useStore } from 'vuex'
-import type { UploadInstance, UploadProps, UploadUserFile } from 'element-plus'
+import type { UploadInstance, UploadUserFile } from 'element-plus'
 // import { ElMessageBox } from 'element-plus'
 const store = useStore()
 const search = ref('')
 const props = defineProps({
-  isSelected: Boolean
+  isSelected: Boolean,
+  fileList: Array
 })
 // 上传文件
 const dialogVisible = ref(false)
 const fileList = ref<UploadUserFile[]>([])
 const uploadData = ref({
-  uploadFolderPath: '/Elysia',
-  fileGroup: 'Elysia'
+  uploadFolderPath: '/' + store.state.userdata.fileGroup,
+  fileGroup: store.state.userdata.fileGroup
 })
 const handleClose = (done: () => void) => {
+  cancelSubmit()
   done()
 }
 const uploadRef = ref<UploadInstance>()
 const submitUpload = () => {
   uploadRef.value!.submit()
-  dialogVisible.value = false
   fileList.value.length = 0
+  dialogVisible.value = false
 }
 const cancelSubmit = () => {
+  fileList.value.length = 0
   dialogVisible.value = false
 }
 // 新建文件夹
 const newFolderData = reactive({
   folderName: '新建文件夹',
   parentFolderPath: store.state.userfolder,
-  fileGroup: store.state.fileGroup
+  fileGroup: store.state.userdata.fileGroup
 })
 const createFolder = () => {
   newFolder(newFolderData).then(res => {
     console.log(res)
-    console.log('上面的是新建文件夹返回值')
   })
   console.log()
 }
+// const Download = () => {
+//   fileDownload(store.state.selectedFilelist, store.state.userdata)
+// }
 </script>
 
 <style lang="less" scoped>
