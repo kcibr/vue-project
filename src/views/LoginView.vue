@@ -30,12 +30,11 @@ const userData = reactive({
   password: '1111'
 })
 const Login = () => {
+  // 更新用户信息
   doLogin(userData).then(res => {
     console.log(res.data)
     if (res.data != null) {
       store.commit('LoadUserData', res.data)
-      // console.log('vuex')
-      // console.log(store.state.userdata.nickname)
       router.push('/home')
     }
   })

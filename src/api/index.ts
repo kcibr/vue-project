@@ -43,6 +43,13 @@ class RequestHttp {
     //   (config: AxiosRequestConfig) => {
       (config: any) => {
         const token = localStorage.getItem('token') || ''
+        if (config.url === '/file/download') {
+          config.responseType = 'blob'
+        }
+        config.withCredentials = false
+        // if (config.url && config.url.includes('有问题的接口')) {
+        //   config.withCredentials = false
+        // }
         return {
           ...config,
           headers: {
@@ -63,6 +70,10 @@ class RequestHttp {
      */
     this.service.interceptors.response.use(
       (response: AxiosResponse) => {
+        const headers = response.headers
+        if (headers['content-type'] === 'application/octet-stream;charset=utf-8') {
+          return Promise.resolve(response) // 这里只返回 response,便于用户根据headers去设置文件名称
+        }
         const { data, config } = response // 解构
         if (data.code === RequestEnums.OVERDUE) {
           // 登录信息失效，应跳转到登录页面，并清空本地的token

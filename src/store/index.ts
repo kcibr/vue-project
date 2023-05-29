@@ -1,22 +1,56 @@
 import { createStore } from 'vuex'
+import { queryAllFile, queryTypeFile } from '../api/file'
 
 export default createStore({
   state: {
     userdata: {},
     selectedFilelist: [] as any[],
-    // user: 'Elysia',
-    // userfolder: '/Elysia', // 用户文件夹
-    currentfolder: '/Elysia', // 当前文件夹
+    queryFileList: [],
+    currentfolder: '', // 当前文件夹
+    currentpath: '',
     // fileGroup: 'Elysia', // 用户组
     search: '',
-    fName: 'music'
+    type: ''
   },
   getters: {
   },
   mutations: {
+    // 加载用户数据
     LoadUserData (state, data) {
       state.userdata = data
+      state.currentfolder = '/' + data.fileGroup
+      state.currentpath = '/' + data.fileGroup
     },
+    // 更新文件查询数据
+    updateQueryFile (state, data) {
+      const qData = {
+        parentDir: data,
+        search: state.search,
+        type: state.type
+      }
+      state.currentfolder = data
+      state.currentpath = data
+      queryAllFile(qData).then(res => {
+        state.queryFileList = res.data
+      })
+      console.log('更新了文件列表')
+    },
+    // 分类查询文件
+    typeQueryFile (state, data) {
+      queryTypeFile(data).then(res => {
+        state.queryFileList = res.data
+      })
+      console.log('更新了文件列表')
+    },
+    // 更新当前文件夹
+    updateCurrentfolder (state, data) {
+      state.currentfolder = data
+    },
+    // 更新当前路径
+    updateCurrentpath (state, data) {
+      state.currentpath = data
+    },
+    // 更新文件列表
     updateFileList (state, filelist) {
       filelist.forEach((item:any) => {
         const arr = []

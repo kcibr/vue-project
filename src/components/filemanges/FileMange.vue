@@ -11,7 +11,7 @@
         <div class="file-mange">
           <div class="file-path">
               <h5 v-if="urlList.length == 1">全部文件</h5>
-              <span v-for="(item,index) in urlList" :key="index" class="f-url">
+              <span v-for="(item,index) in urlList" :key="index" class="f-url" v-else @click="toPath(item)">
               <span :class="(urlList.indexOf(item)+1) == urlList.length ? 'f-url-text-last' : 'f-url-text'">{{ item }}</span>
               <span class="f-url-sep">{{ (urlList.indexOf(item)+1) == urlList.length ? '' : ' > ' }}</span>
               </span>
@@ -22,7 +22,10 @@
         </div>
         <div class="file-detail" v-if="fileDetailVisible">
           <el-button type="primary" @click="closeDetail">收回</el-button>
-          <div>{{ store.state.selectedFilelist }}</div>
+          <div>当前文件夹：{{ store.state.currentfolder }}</div>
+          <div>当前路径:{{ store.state.currentpath }}</div>
+          <div>urllist:{{ urlList }}</div>
+          <div>已选中文件夹：{{ store.state.selectedFilelist }}</div>
         </div>
       </div>
     </div>
@@ -44,11 +47,19 @@ const openDetail = () => {
 const closeDetail = () => {
   fileDetailVisible.value = false
 }
+// 路径导航栏
+const fpath = store.state.currentfolder
+// const fpath = '/Elysia/图片/QQ截图20200207091957.png'
 const urlList = computed(() => {
-  const arr:Array<string> = fpath.split('/')
+  const arr:Array<string> = store.state.currentfolder.split('/')
+  arr.shift()
+  arr.splice(0, 1, '全部文件')
   return arr
 })
-const fpath = '全部文件/DMIZ/图片/风景/百岁山.png'
+// 点击导航栏跳转
+const toPath = (row:any) => {
+  console.log('点击了导航栏' + row)
+}
 const getSelectedFile = (val:Array<object>) => {
   console.log(val)
   if (val.length === 0) {

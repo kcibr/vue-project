@@ -1,8 +1,9 @@
 <template>
  <div class="file-list">
     <el-table
-      :data="fileList"
+      :data="store.state.queryFileList"
       stripe
+      :default-sort="{ prop: 'size', order: 'descending' }"
       @select="getSelectionRows"
       @select-all="selectAll"
       @selection-change="selectionChangeHandle"
@@ -12,11 +13,10 @@
         <el-table-column  prop="" label=""  width="30" type="selection"/>
         <el-table-column label="文件名" prop="" width="380">
         <template #default="scope">
-            <div class="file-name-list">
+            <div class="file-name-list" @dblclick="openFile(scope.row)">
               <div class="file-name-list-img">
                 <el-image  class="el-image" :src="autoMatchIcon(scope.row.type)" alt="文件图标" fit="fill" ></el-image>
               </div>
-              <!-- {{ scope.row.type }} -->
               <div class="file-name-list-a">
                 <a>{{ scope.row.fname }}</a>
               </div>
@@ -25,10 +25,11 @@
         </el-table-column>
         <!-- <el-table-column prop="name" label=""  style="min-width：280px;">
         </el-table-column> -->
-        <el-table-column prop="updatetime" label="修改时间" sortable style="min-width：180px;"/>
-        <el-table-column prop="size" label="大小" sortable style="min-width：80px;"/>
+        <el-table-column prop="updateTime" label="修改时间" sortable style="min-width：180px;"/>
+        <el-table-column prop="size" label="大小" sortable  style="min-width：80px;"/>
     </el-table>
   </div>
+  <!-- {{ fileList }} -->
     <!-- <li v-for="(item,index) in sCHData" :key="index">
       {{ item.fname }}
     </li>
@@ -37,26 +38,51 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, defineEmits, onMounted, computed } from 'vue'
+import { ref, reactive, defineEmits, onMounted, computed, watch } from 'vue'
 import { autoMatchIcon } from '../../tools/file-auto-type-url'
 import { queryAllFile } from '../../api/file'
 import { useStore } from 'vuex'
+import { ElMessage } from 'element-plus'
 const store = useStore()
-const queryData = reactive({
-  parentDir: '/' + store.state.userdata.fileGroup,
-  search: store.state.search
-})
+// const queryData = reactive({
+//   parentDir: '/' + store.state.userdata.fileGroup,
+//   search: store.state.search,
+//   type: store.state.type
+// })
 onMounted(() => {
-  QueryFileList()
+  store.commit('updateQueryFile', '/' + store.state.userdata.fileGroup)
 })
-const fileList = ref([])
-const QueryFileList = () => {
-  queryAllFile(queryData).then(res => {
-    fileList.value = res.data
-    console.log(res)
-  })
-  console.log('执行力查询文件')
+// 查询文件
+const fileList = store.state.queryFileList
+
+// 文件大小显示单位
+// const updateSize = (size:number) => {
+//   const kb = 1024
+//   const mb = 1024 * 1024
+//   const gb = 1024 * 1024 * 1024
+//   if (size.value === null) {
+//     return '---'
+//   } else if (size.value > kb) {
+//     return (size.value / kb).toFixed(3).slice(0, -1) + 'kb'
+//   } else if (size.value > mb) {
+//     return (size.value / mb).toFixed(3).slice(0, -1) + 'mb'
+//   } else if (size.value > gb) {
+//     return (size.value / gb).toFixed(3).slice(0, -1) + 'gb'
+//   }
+//   return ''
+// }
+// 打开文件夹(文件)
+const openFile = (row:any) => {
+  if (row.type === 'folder') {
+    console.log('需要查询的路径' + row.path)
+    store.commit('updateQueryFile', row.path)
+    console.log('点击了文件夹' + row.fname)
+  } else {
+    ElMessage.warning('暂不支持文件预览')
+    console.log('点击了文件' + row.fname)
+  }
 }
+// 文件选择
 const selectedFiles = reactive([])
 // 全选-全不选功能
 const selectAll = () => {

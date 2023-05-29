@@ -1,8 +1,8 @@
 <template>
 <div class="content-top">
-  <el-button type="primary" style="border-radius:16px;" @click="dialogVisible = true" v-if="props.isSelected">上传</el-button>
+  <el-button type="primary" style="border-radius:16px;" @click="updateDialogVisible = true" v-if="props.isSelected">上传</el-button>
   <div class="file-tools-select" style="margin-left:30px;width:110px;" v-if="props.isSelected">
-    <el-button type="primary" text style="width:100px;" @click="createFolder()"><el-icon><FolderAdd/></el-icon>&nbsp;新建文件夹</el-button>
+    <el-button type="primary" text style="width:100px;" @click="dialogFormVisible = true"><el-icon><FolderAdd/></el-icon>&nbsp;新建文件夹</el-button>
   </div>
   <div class="file-tools-select" v-if="!props.isSelected">
     <el-button type="primary" text @click="fileDownload(store.state.selectedFilelist)"><el-icon><Download/></el-icon>&nbsp;下载</el-button>|
@@ -25,28 +25,36 @@
   </div>
   <!-- 上传功能弹窗 -->
   <el-dialog
-    v-model="dialogVisible"
+    v-model="updateDialogVisible"
     title="文件上传"
     width="30%"
     align-center
     :before-close="handleClose"
   >
+  <!-- action="http://localhost:8081/file/uploadFile" -->
+  <!-- :http-request="uploadHttpRequest" -->
   <el-upload
     v-model:file-list="fileList"
-    action="http://localhost:8081/file/uploadFile"
+    :http-request="uploadHttpRequest"
+    action="#"
     class="upload"
     :auto-upload="false"
     :data="uploadData"
+    :on-change="fileChange"
     :multiple="true"
     :limit="9"
+    drag
     list-type="picture"
     ref="uploadRef"
   >
-    <el-button type="primary">选择文件</el-button>
+  <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+    <div class="el-upload__text">
+      将文件拖到此处,或 <em>点击选取文件</em>
+    </div>
     <template #tip>
       <div class="el-upload__tip">
-        文件大小不得超过1GB
-        {{ fileList }}
+        单次最多同时上传9个文件且总大小不得超过100MB
+        <!-- {{ fileList }} -->
       </div>
     </template>
 
@@ -60,7 +68,25 @@
       </span>
     </template>
   </el-dialog>
-
+<!-- 新建文件夹对话框 -->
+<el-dialog v-model="dialogFormVisible" center="true" title="新建文件夹">
+    <el-form >
+      <el-form-item label="当前路径" label-width="140px">
+        <el-input  disabled :placeholder="store.state.currentpath" />
+      </el-form-item>
+      <el-form-item label="文件夹名" label-width="140px">
+        <el-input v-model="foname.name" autocomplete="off" placeholder="默认创建在当前路径下" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="createFolder">
+          确定
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </div>
 </template>
 
@@ -69,7 +95,8 @@ import { defineProps, reactive, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { newFolder, fileDownload } from '../../api/file'
 import { useStore } from 'vuex'
-import type { UploadInstance, UploadUserFile } from 'element-plus'
+import { Action, ElMessage, ElMessageBox, MessageParamsWithType, UploadInstance, UploadUserFile } from 'element-plus'
+import axios from 'axios'
 // import { ElMessageBox } from 'element-plus'
 const store = useStore()
 const search = ref('')
@@ -78,12 +105,42 @@ const props = defineProps({
   fileList: Array
 })
 // 上传文件
-const dialogVisible = ref(false)
+const updateDialogVisible = ref(false)
 const fileList = ref<UploadUserFile[]>([])
 const uploadData = ref({
   uploadFolderPath: '/' + store.state.userdata.fileGroup,
   fileGroup: store.state.userdata.fileGroup
 })
+const fileChange = (file:any, fileList:any) => {
+  if (fileList.length >= 9) {
+    ElMessageBox.alert('单次上传最多上传9个文件，且文件大小不得超过100MB', '提示', {
+      confirmButtonText: '确定'
+      // callback: (action: Action) => {
+      //   ElMessage({
+      //     type: 'info',
+      //     message: `action: ${action}`
+      //   })
+      // }
+    })
+  }
+}
+const uploadHttpRequest = (param, fileList) => {
+  const fd = new FormData()
+  fd.append('uploadFolderPath', store.state.currentfolder)
+  fd.append('fileGroup', store.state.userdata.fileGroup)
+  fd.append('file', param.file)
+  axios.post('http://localhost:8081/file/uploadFile', fd, {
+  }).then(response => {
+    // 请求成功
+    ElMessage.success('上传成功')
+    param.status = 'success' // 上传成功后将status属性改成success
+  }).catch(function (error) {
+    // 请求失败处理
+    ElMessage.error(error)
+    param.status = 'failed'
+    param.message = '上传失败'
+  })
+}
 const handleClose = (done: () => void) => {
   cancelSubmit()
   done()
@@ -92,27 +149,34 @@ const uploadRef = ref<UploadInstance>()
 const submitUpload = () => {
   uploadRef.value!.submit()
   fileList.value.length = 0
-  dialogVisible.value = false
+  updateDialogVisible.value = false
 }
 const cancelSubmit = () => {
   fileList.value.length = 0
-  dialogVisible.value = false
+  updateDialogVisible.value = false
 }
 // 新建文件夹
-const newFolderData = reactive({
-  folderName: '新建文件夹',
-  parentFolderPath: store.state.userfolder,
-  fileGroup: store.state.userdata.fileGroup
+const dialogFormVisible = ref(false)
+const foname = reactive({
+  name: ''
 })
 const createFolder = () => {
-  newFolder(newFolderData).then(res => {
-    console.log(res)
-  })
+  const data = {
+    folderName: foname.name,
+    parentFolderPath: store.state.currentpath,
+    fileGroup: store.state.userdata.fileGroup
+  }
+  if (foname.name === '') {
+    ElMessage.warning('请输入文件夹名')
+  } else {
+    newFolder(data).then(res => {
+      dialogFormVisible.value = false
+    })
+  }
+
   console.log()
 }
-// const Download = () => {
-//   fileDownload(store.state.selectedFilelist, store.state.userdata)
-// }
+
 </script>
 
 <style lang="less" scoped>
