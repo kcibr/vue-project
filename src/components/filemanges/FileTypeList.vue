@@ -57,7 +57,7 @@ const queryPhoto = () => {
   const queryAllData = {
     fileGroup: store.state.userdata.fileGroup,
     search: store.state.search,
-    type: 'png'
+    typeList: 'png/jpg/webp'
   }
   store.commit('typeQueryFile', queryAllData)
 }
@@ -66,7 +66,8 @@ const queryVideo = () => {
   const queryAllData = {
     fileGroup: store.state.userdata.fileGroup,
     search: store.state.search,
-    type: 'mp4'
+    typeList: 'mp4'
+
   }
   store.commit('typeQueryFile', queryAllData)
 }
@@ -75,7 +76,7 @@ const queryMusic = () => {
   const queryAllData = {
     fileGroup: store.state.userdata.fileGroup,
     search: store.state.search,
-    type: 'mp3'
+    typeList: 'mp3/wav'
   }
   store.commit('typeQueryFile', queryAllData)
 }
@@ -84,7 +85,7 @@ const queryDocument = () => {
   const queryAllData = {
     fileGroup: store.state.userdata.fileGroup,
     search: store.state.search,
-    type: 'word'
+    typeList: 'word/ppt/pdf/docx/doc/txt/pptx'
   }
   store.commit('typeQueryFile', queryAllData)
 }
@@ -93,7 +94,7 @@ const queryZip = () => {
   const queryAllData = {
     fileGroup: store.state.userdata.fileGroup,
     search: store.state.search,
-    type: 'zip'
+    typeList: 'zip'
   }
   store.commit('typeQueryFile', queryAllData)
 }
@@ -102,7 +103,7 @@ const queryOther = () => {
   const queryAllData = {
     fileGroup: store.state.userdata.fileGroup,
     search: store.state.search,
-    type: '其他'
+    typeList: '其他'
   }
   store.commit('typeQueryFile', queryAllData)
 }

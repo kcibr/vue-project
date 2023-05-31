@@ -48,8 +48,6 @@ const closeDetail = () => {
   fileDetailVisible.value = false
 }
 // 路径导航栏
-const fpath = store.state.currentfolder
-// const fpath = '/Elysia/图片/QQ截图20200207091957.png'
 const urlList = computed(() => {
   const arr:Array<string> = store.state.currentfolder.split('/')
   arr.shift()
@@ -59,7 +57,19 @@ const urlList = computed(() => {
 // 点击导航栏跳转
 const toPath = (row:any) => {
   console.log('点击了导航栏' + row)
+  const arr:Array<string> = store.state.currentfolder.split('/')
+  arr.shift()
+  arr.splice(0, 1, '全部文件')
+  if (arr.indexOf(row) === 0) {
+    store.commit('updateQueryFile', '/' + store.state.userdata.fileGroup)
+  } else {
+    arr.splice(arr.indexOf(row) + 1, arr.length - arr.indexOf(row))
+    arr.splice(0, 1, store.state.userdata.fileGroup)
+    store.commit('updateQueryFile', '/' + arr.join('/'))
+    console.log('拼接后的查询路径' + '/' + arr.join('/'))
+  }
 }
+// 获取已选文件
 const getSelectedFile = (val:Array<object>) => {
   console.log(val)
   if (val.length === 0) {
@@ -68,7 +78,6 @@ const getSelectedFile = (val:Array<object>) => {
     fileData.isEmpty = false
     fileData.selectedfile = val
   }
-  // isSelected = (val.length === 0)
 }
 </script>
 

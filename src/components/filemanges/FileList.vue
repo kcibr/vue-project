@@ -40,7 +40,6 @@
 <script lang="ts" setup>
 import { ref, reactive, defineEmits, onMounted, computed, watch } from 'vue'
 import { autoMatchIcon } from '../../tools/file-auto-type-url'
-import { queryAllFile } from '../../api/file'
 import { useStore } from 'vuex'
 import { ElMessage } from 'element-plus'
 const store = useStore()
@@ -53,24 +52,10 @@ onMounted(() => {
   store.commit('updateQueryFile', '/' + store.state.userdata.fileGroup)
 })
 // 查询文件
-const fileList = store.state.queryFileList
+const fileList = computed(() => {
+  return store.state.queryFileList
+})
 
-// 文件大小显示单位
-// const updateSize = (size:number) => {
-//   const kb = 1024
-//   const mb = 1024 * 1024
-//   const gb = 1024 * 1024 * 1024
-//   if (size.value === null) {
-//     return '---'
-//   } else if (size.value > kb) {
-//     return (size.value / kb).toFixed(3).slice(0, -1) + 'kb'
-//   } else if (size.value > mb) {
-//     return (size.value / mb).toFixed(3).slice(0, -1) + 'mb'
-//   } else if (size.value > gb) {
-//     return (size.value / gb).toFixed(3).slice(0, -1) + 'gb'
-//   }
-//   return ''
-// }
 // 打开文件夹(文件)
 const openFile = (row:any) => {
   if (row.type === 'folder') {
@@ -87,7 +72,6 @@ const selectedFiles = reactive([])
 // 全选-全不选功能
 const selectAll = () => {
   if (selectedFiles.length < fileList.value.length) {
-    // console.log(selectedFileTable.selectedFile.length < tableData.length)
     selectedFiles.splice(0, selectedFiles.length)
     let val:object
     for (val of fileList.value) {
@@ -95,15 +79,21 @@ const selectAll = () => {
     }
   } else {
     selectedFiles.splice(0, selectedFiles.length)
+    store.commit('updateFileList', '清空')
   }
 }
 // 多选/单选
-const getSelectionRows = (selection:object, row:object) => {
-  if (selectedFiles.indexOf(row.name) > -1) {
+const getSelectionRows = (selection:any, row:any) => {
+  if (selection.length === 0) {
+    store.commit('updateFileList', '清空')
+  }
+  if (selectedFiles.indexOf(row.name) !== -1) {
     selectedFiles.splice(selectedFiles.indexOf(row.name), 1)
   } else {
     selectedFiles.push(row.name)
   }
+  console.log('row')
+  console.log(row)
 }
 // 提交多选信息
 const emit = defineEmits(['selected-file-change'])
@@ -111,7 +101,7 @@ let sCHData:Array<object> = []
 const selectionChangeHandle = (val:Array<object>) => {
   sCHData = val
   store.commit('updateFileList', val)
-  console.log('select')
+  console.log('提交的多选信息')
   console.log(store.state.selectedFilelist)
   emit('selected-file-change', sCHData)
 }

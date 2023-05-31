@@ -6,7 +6,7 @@
   </div>
   <div class="file-tools-select" v-if="!props.isSelected">
     <el-button type="primary" text @click="fileDownload(store.state.selectedFilelist)"><el-icon><Download/></el-icon>&nbsp;下载</el-button>|
-    <el-button type="primary" text><el-icon><Delete/></el-icon>&nbsp;删除</el-button>|
+    <el-button type="primary" text @click="deleteFiles()"><el-icon><Delete/></el-icon>&nbsp;删除</el-button>|
     <el-button type="primary" text><el-icon><Switch/></el-icon>&nbsp;移动</el-button>|
     <el-button type="primary" text><el-icon><DocumentCopy/></el-icon>&nbsp;复制</el-button>|
     <el-button type="primary" text><el-icon><DocumentRemove/></el-icon>&nbsp;重命名</el-button>
@@ -93,7 +93,7 @@
 <script lang="ts" setup>
 import { defineProps, reactive, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { newFolder, fileDownload } from '../../api/file'
+import { newFolder, fileDownload, deleteFile } from '../../api/file'
 import { useStore } from 'vuex'
 import { Action, ElMessage, ElMessageBox, MessageParamsWithType, UploadInstance, UploadUserFile } from 'element-plus'
 import axios from 'axios'
@@ -111,7 +111,7 @@ const uploadData = ref({
   uploadFolderPath: '/' + store.state.userdata.fileGroup,
   fileGroup: store.state.userdata.fileGroup
 })
-const fileChange = (file:any, fileList:any) => {
+const fileChange = (fileList:any) => {
   if (fileList.length >= 9) {
     ElMessageBox.alert('单次上传最多上传9个文件，且文件大小不得超过100MB', '提示', {
       confirmButtonText: '确定'
@@ -124,7 +124,7 @@ const fileChange = (file:any, fileList:any) => {
     })
   }
 }
-const uploadHttpRequest = (param, fileList) => {
+const uploadHttpRequest = (param:any) => {
   const fd = new FormData()
   fd.append('uploadFolderPath', store.state.currentfolder)
   fd.append('fileGroup', store.state.userdata.fileGroup)
@@ -133,6 +133,7 @@ const uploadHttpRequest = (param, fileList) => {
   }).then(response => {
     // 请求成功
     ElMessage.success('上传成功')
+    store.commit('updateQueryFile', store.state.currentfolder)
     param.status = 'success' // 上传成功后将status属性改成success
   }).catch(function (error) {
     // 请求失败处理
@@ -171,12 +172,40 @@ const createFolder = () => {
   } else {
     newFolder(data).then(res => {
       dialogFormVisible.value = false
+      store.commit('updateQueryFile', store.state.currentfolder)
     })
   }
-
-  console.log()
 }
-
+const deleteFiles = () => {
+  ElMessageBox.confirm(
+    '是否删除这些文件？',
+    '确认删除',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  )
+    .then(() => {
+      const arr:Array<string> = []
+      store.state.selectedFilelist.forEach(item => {
+        arr.push(item.fid)
+      })
+      const data:any = {
+        fileList: arr.join('/')
+      }
+      deleteFile(data).then(() => {
+        store.commit('updateQueryFile', store.state.currentfolder)
+        ElMessage({
+          type: 'success',
+          message: '删除成功'
+        })
+      })
+    })
+    .catch(() => {
+      console.log()
+    })
+}
 </script>
 
 <style lang="less" scoped>

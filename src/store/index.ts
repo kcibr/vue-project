@@ -5,10 +5,9 @@ export default createStore({
   state: {
     userdata: {},
     selectedFilelist: [] as any[],
-    queryFileList: [],
+    queryFileList: [] as any[],
     currentfolder: '', // 当前文件夹
     currentpath: '',
-    // fileGroup: 'Elysia', // 用户组
     search: '',
     type: ''
   },
@@ -50,18 +49,22 @@ export default createStore({
     updateCurrentpath (state, data) {
       state.currentpath = data
     },
-    // 更新文件列表
+    // 更新已选文件列表
     updateFileList (state, filelist) {
-      filelist.forEach((item:any) => {
-        const arr = []
-        arr.push({
-          fid: item.fid,
-          fName: item.fname
+      const arr: any[] = []
+      if (filelist === '清空') {
+        console.log('清空已选文件')
+        state.selectedFilelist.splice(0, state.selectedFilelist.length)
+      } else {
+        filelist.forEach((item:any) => {
+          arr.push({
+            fid: item.fid,
+            fName: item.fname,
+            type: item.type
+          })
+          state.selectedFilelist = arr
         })
-        console.log('arr')
-        console.log(arr)
-        state.selectedFilelist = arr
-      })
+      }
     }
   },
   actions: {

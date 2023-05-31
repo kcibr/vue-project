@@ -7,15 +7,24 @@ import Video from '../assets/icon/视频.png'
 import Exe from '../assets/icon/exe.png'
 import Music from '../assets/icon/music.png'
 import Png from '../assets/icon/其他.png'
+import Word from '../assets/icon/word.png'
+import Ppt from '../assets/icon/ppt.png'
 const iconTypeList = [
   { typename: 'folder', typeicon: Folder },
   { typename: 'pdf', typeicon: Pdf },
   { typename: 'txt', typeicon: Txt },
   { typename: 'zip', typeicon: Zip },
   { typename: 'mp3', typeicon: Music },
+  { typename: 'wav', typeicon: Music },
   { typename: 'mp4', typeicon: Video },
   { typename: 'exe', typeicon: Exe },
-  { typename: 'png', typeicon: Png }
+  { typename: 'png', typeicon: Png },
+  { typename: 'word', typeicon: Word },
+  { typename: 'docx', typeicon: Word },
+  { typename: 'doc', typeicon: Word },
+  { typename: 'ppt', typeicon: Pdf },
+  { typename: 'pptx', typeicon: Pdf },
+  { typename: 'jpg', typeicon: Png }
 
 ]
 // 自动匹配文件图标
