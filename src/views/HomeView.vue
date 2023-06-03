@@ -17,11 +17,12 @@ const store = useStore()
 onMounted(() => {
 // 在页面加载时读取sessionStorage里的状态信息
   if (sessionStorage.getItem('store')) {
+    console.log('信息读取')
     store.replaceState(
       Object.assign(
         {},
         store.state,
-        JSON.parse(sessionStorage.getItem('store'))
+        JSON.parse(sessionStorage.getItem('store') || '')
       )
     )
   }
@@ -29,6 +30,7 @@ onMounted(() => {
 // 页面刷新时，将vuex里的信息保存到sessionStorage
 // 在页面刷新时先触发beforeunload事件
 window.addEventListener('beforeunload', () => {
+  console.log('信息存入')
   store.commit('updateFileList', null)
   sessionStorage.setItem('store', JSON.stringify(store.state))
 })

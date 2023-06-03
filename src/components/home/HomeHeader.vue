@@ -11,14 +11,21 @@
       </div>
       <h5>{{ store.state.userdata.nickname }}</h5>
       <span></span>
+      <span style="margin-top: 14px;">
+    <el-button type="primary" text @click="loginout()"><el-icon><Expand/></el-icon>&nbsp;退出登录</el-button>
+    </span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useStore } from 'vuex'
-import autor from '../../assets/icon/原神图标.png'
+import autor from '../../assets/warma - 副本.jpg'
+import router from '@/router'
 const store = useStore()
+const loginout = () => {
+  router.push('/')
+}
 </script>
 
 <style lang="less" scoped>
@@ -41,8 +48,7 @@ const store = useStore()
 
   .autor {
     display: flex;
-    width: 150px;
-    // background-color: #9ae1ff;
+    width: 250px;
 
     h5 {
       display: inline;

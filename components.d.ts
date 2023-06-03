@@ -9,7 +9,6 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    '模板': typeof import('./src/components/模板.vue')['default']
     FileList: typeof import('./src/components/filemanges/FileList.vue')['default']
     FileMange: typeof import('./src/components/filemanges/FileMange.vue')['default']
     FileMangeToolbar: typeof import('./src/components/filemanges/FileMangeToolbar.vue')['default']

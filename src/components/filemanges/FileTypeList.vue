@@ -35,7 +35,7 @@
           </router-link>
             <el-menu-item index="1-6" @click="queryOther()"><el-icon><More /></el-icon>其他</el-menu-item>
         </el-sub-menu>
-        <el-menu-item index="2">
+        <el-menu-item index="2" @click="qDFileList()">
           <el-icon><Delete /></el-icon>
           <span style="font-weight: bold;">回收站</span>
         </el-menu-item>
@@ -46,8 +46,10 @@
 
 <script lang="ts" setup>
 import { reactive } from 'vue'
+import { queryDeleteFile } from '../../api/file'
 import { useStore } from 'vuex'
 const store = useStore()
+
 // 查询全部文件
 const queryAll = () => {
   store.commit('updateQueryFile', '/' + store.state.userdata.fileGroup)
@@ -106,6 +108,17 @@ const queryOther = () => {
     typeList: '其他'
   }
   store.commit('typeQueryFile', queryAllData)
+}
+// 查询回收站
+const qDFileList = () => {
+  console.log('触发了回收站方法')
+  const data = {
+    fileGroup: store.state.userdata.fileGroup
+  }
+  queryDeleteFile(data).then(res => {
+    console.log(res)
+    store.commit('updateDeleteFiles', res.data)
+  })
 }
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)

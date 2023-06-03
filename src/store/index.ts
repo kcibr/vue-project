@@ -45,6 +45,10 @@ export default createStore({
     updateCurrentfolder (state, data) {
       state.currentfolder = data
     },
+    // 更新回收站文件列表
+    updateDeleteFiles (state, data) {
+      state.queryFileList = data
+    },
     // 更新当前路径
     updateCurrentpath (state, data) {
       state.currentpath = data
@@ -56,14 +60,18 @@ export default createStore({
         console.log('清空已选文件')
         state.selectedFilelist.splice(0, state.selectedFilelist.length)
       } else {
-        filelist.forEach((item:any) => {
-          arr.push({
-            fid: item.fid,
-            fName: item.fname,
-            type: item.type
+        if (filelist == null) {
+          console.log('列表为空')
+        } else {
+          filelist.forEach((item:any) => {
+            arr.push({
+              fid: item.fid,
+              fName: item.fname,
+              type: item.type
+            })
+            state.selectedFilelist = arr
           })
-          state.selectedFilelist = arr
-        })
+        }
       }
     }
   },

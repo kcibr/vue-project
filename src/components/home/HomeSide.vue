@@ -11,15 +11,15 @@
         <el-icon size="30" color="#A2ABBD"><HomeFilled /></el-icon>
         <p>首页</p>
       </el-menu-item>
-      <el-menu-item index="2">
+      <el-menu-item index="2" disabled>
         <el-icon size="30"><Comment /></el-icon>
         <p>信息</p>
       </el-menu-item>
-      <el-menu-item index="3">
+      <el-menu-item index="3" disabled>
         <el-icon size="30" color="#A2ABBD"><Notebook /></el-icon>
         <p>记录</p>
       </el-menu-item>
-      <el-menu-item index="4">
+      <el-menu-item index="4" disabled>
         <el-icon size="30"><DeleteFilled /></el-icon>
         <p>回收站</p>
       </el-menu-item>

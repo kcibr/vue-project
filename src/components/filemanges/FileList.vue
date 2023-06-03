@@ -11,7 +11,7 @@
       max-height="750"
       style="width: 100%;">
         <el-table-column  prop="" label=""  width="30" type="selection"/>
-        <el-table-column label="文件名" prop="" width="380">
+        <el-table-column label="文件名" prop="" width="580">
         <template #default="scope">
             <div class="file-name-list" @dblclick="openFile(scope.row)">
               <div class="file-name-list-img">

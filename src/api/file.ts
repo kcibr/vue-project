@@ -30,6 +30,9 @@ export function newFolder (data:any) {
 // 文件删除
 export function deleteFile (data: any) {
   return axios.post<any>('/file/deleteFiles', data)
+}// 查询回收站
+export function queryDeleteFile (data: any) {
+  return axios.get<any>('/file/queryDeletedFile', data)
 }
 // 文件下载
 export function fileDownload (fileList:any[]) {

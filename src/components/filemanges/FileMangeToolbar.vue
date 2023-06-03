@@ -39,7 +39,6 @@
     action="#"
     class="upload"
     :auto-upload="false"
-    :data="uploadData"
     :on-change="fileChange"
     :multiple="true"
     :limit="9"
@@ -107,10 +106,10 @@ const props = defineProps({
 // 上传文件
 const updateDialogVisible = ref(false)
 const fileList = ref<UploadUserFile[]>([])
-const uploadData = ref({
-  uploadFolderPath: '/' + store.state.userdata.fileGroup,
-  fileGroup: store.state.userdata.fileGroup
-})
+// const uploadData = ref({
+//   uploadFolderPath: '/' + store.state.userdata.fileGroup,
+//   fileGroup: store.state.userdata.fileGroup
+// })
 const fileChange = (fileList:any) => {
   if (fileList.length >= 9) {
     ElMessageBox.alert('单次上传最多上传9个文件，且文件大小不得超过100MB', '提示', {

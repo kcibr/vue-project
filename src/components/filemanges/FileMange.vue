@@ -40,7 +40,7 @@ const fileData = reactive({
   selectedfile: [] as object[],
   isEmpty: true
 })
-const fileDetailVisible = ref(true)
+const fileDetailVisible = ref(false)
 const openDetail = () => {
   fileDetailVisible.value = true
 }
@@ -83,6 +83,8 @@ const getSelectedFile = (val:Array<object>) => {
 
 <style lang="less" scoped>
  .content{
+  box-shadow:0 5px  5px rgb(240, 240, 240) inset;
+  background-color: #fff;
   padding: 20px 24px 0 24px;
   width: calc(100vw - 329px);
   max-width: calc(100vw - 329px);

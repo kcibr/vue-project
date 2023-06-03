@@ -6,7 +6,7 @@ import Unknown from '../assets/icon/原神图标.png'
 import Video from '../assets/icon/视频.png'
 import Exe from '../assets/icon/exe.png'
 import Music from '../assets/icon/music.png'
-import Png from '../assets/icon/其他.png'
+import Png from '../assets/icon/图片.png'
 import Word from '../assets/icon/word.png'
 import Ppt from '../assets/icon/ppt.png'
 const iconTypeList = [
@@ -22,8 +22,8 @@ const iconTypeList = [
   { typename: 'word', typeicon: Word },
   { typename: 'docx', typeicon: Word },
   { typename: 'doc', typeicon: Word },
-  { typename: 'ppt', typeicon: Pdf },
-  { typename: 'pptx', typeicon: Pdf },
+  { typename: 'ppt', typeicon: Ppt },
+  { typename: 'pptx', typeicon: Ppt },
   { typename: 'jpg', typeicon: Png }
 
 ]
