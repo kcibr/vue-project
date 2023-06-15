@@ -17,7 +17,7 @@
     <el-form-item label="账号" class="login_form_item"  style="margin-top: 40px;">
       <el-input v-model="userData.account" />
     </el-form-item>
-    <el-form-item label="密码" class="login_form_item" >
+    <el-form-item label="密码" class="login_form_item" style="margin-top: 30px;">
       <el-input v-model="userData.password" type="password" show-password/>
     </el-form-item>
     <el-button type="primary" @click="Login()" class="login_button" >登录</el-button>
@@ -32,7 +32,7 @@
   >
   <el-button type="text" @click="formState.isRegister = false" class="back_login" >返回登录</el-button>
 
-      <!-- 登录视图 -->
+      <!-- 注册视图 -->
     <el-form-item label="账号" class="login_form_item" >
       <el-input v-model="regData.account" />
     </el-form-item>
@@ -84,6 +84,7 @@ const Login = () => {
     }
   })
 }
+// 注册功能
 const regData = reactive({
   account: '',
   password: '',
@@ -162,7 +163,7 @@ const Register = () => {
   .reg_button{
     width: 60px;
     display:block;
-    margin-top: 30px;
+    margin-top: 10px;
     margin-left:220px;
   }
   .back_login{
