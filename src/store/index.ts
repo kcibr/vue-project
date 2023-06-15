@@ -9,7 +9,12 @@ export default createStore({
     currentfolder: '', // 当前文件夹
     currentpath: '',
     search: '',
-    type: ''
+    type: '',
+    ClipBoard: {
+      type: '',
+      data: {}
+    }
+
   },
   getters: {
   },
@@ -19,6 +24,10 @@ export default createStore({
       state.userdata = data
       state.currentfolder = '/' + data.fileGroup
       state.currentpath = '/' + data.fileGroup
+    },
+    // 更新搜索信息
+    updateSearch (state, data) {
+      state.search = data
     },
     // 更新文件查询数据
     updateQueryFile (state, data) {
@@ -33,6 +42,7 @@ export default createStore({
         state.queryFileList = res.data
       })
       console.log('更新了文件列表')
+      state.search = ''
     },
     // 分类查询文件
     typeQueryFile (state, data) {

@@ -1,9 +1,6 @@
 import { ElMessage } from 'element-plus'
 import axios from './'
-import DownloadFile from 'js-file-download'
-import { useStore } from 'vuex'
-import { it } from 'element-plus/es/locale'
-const store = useStore()
+
 // 查询用户所有文件
 export interface QueryFileData{
     parentDir:string
@@ -30,7 +27,8 @@ export function newFolder (data:any) {
 // 文件删除
 export function deleteFile (data: any) {
   return axios.post<any>('/file/deleteFiles', data)
-}// 查询回收站
+}
+// 查询回收站
 export function queryDeleteFile (data: any) {
   return axios.get<any>('/file/queryDeletedFile', data)
 }
@@ -71,4 +69,8 @@ export function fileDownload (fileList:any[]) {
       }
     })
   }
+}
+// 文件重命名
+export function reFName (data: any) {
+  return axios.get<any>('/file/reName', data)
 }

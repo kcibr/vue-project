@@ -3,7 +3,7 @@
     <el-icon size="46" color="red" style="padding-top:5px;padding-left:15px;">
       <UploadFilled />
     </el-icon>
-    <h2>基于springboot+vue搭建的文件上传系统</h2>
+    <h2>文件上传下载服务系统</h2>
     <span></span>
     <div class="autor">
       <div style="width:46px;">
@@ -22,9 +22,21 @@
 import { useStore } from 'vuex'
 import autor from '../../assets/warma - 副本.jpg'
 import router from '@/router'
+import { ElMessageBox } from 'element-plus'
 const store = useStore()
 const loginout = () => {
-  router.push('/')
+  ElMessageBox.confirm(
+    '确认退出登录？',
+    '退出登录',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  ).then(() => {
+    sessionStorage.removeItem('store')
+    router.push('/')
+  })
 }
 </script>
 

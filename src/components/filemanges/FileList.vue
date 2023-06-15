@@ -12,29 +12,30 @@
       style="width: 100%;">
         <el-table-column  prop="" label=""  width="30" type="selection"/>
         <el-table-column label="文件名" prop="" width="580">
-        <template #default="scope">
+        <template #default="scope" >
             <div class="file-name-list" @dblclick="openFile(scope.row)">
               <div class="file-name-list-img">
                 <el-image  class="el-image" :src="autoMatchIcon(scope.row.type)" alt="文件图标" fit="fill" ></el-image>
               </div>
-              <div class="file-name-list-a">
+              <div class="file-name-list-a" @contextmenu.prevent="rightClick($event, scope)">
                 <a>{{ scope.row.fname }}</a>
               </div>
             </div>
         </template>
         </el-table-column>
-        <!-- <el-table-column prop="name" label=""  style="min-width：280px;">
-        </el-table-column> -->
         <el-table-column prop="updateTime" label="修改时间" sortable style="min-width：180px;"/>
         <el-table-column prop="size" label="大小" sortable  style="min-width：80px;"/>
     </el-table>
   </div>
-  <!-- {{ fileList }} -->
-    <!-- <li v-for="(item,index) in sCHData" :key="index">
-      {{ item.fname }}
-    </li>
-    {{ selectedFiles }}|{{ sCHData.length }} -->
-    <!-- {{ fileList }} -->
+  <!-- 右键菜单 -->
+  <div id="contextmenu" v-show="menuVisible" class="menu">
+    <el-button type="primary" text class="menu-button" @click="rName()"><el-icon><DocumentRemove/></el-icon>&nbsp;重命名</el-button>
+    <el-button type="primary" text class="menu-button"><el-icon><DocumentCopy/></el-icon>&nbsp;复&nbsp;&nbsp;&nbsp;&nbsp;制</el-button>
+    <el-button type="primary" text class="menu-button"><el-icon><Switch/></el-icon>&nbsp;剪&nbsp;&nbsp;&nbsp;&nbsp;切</el-button>
+    <el-button type="primary" text class="menu-button"><el-icon><Tickets /></el-icon>&nbsp;粘&nbsp;&nbsp;&nbsp;&nbsp;贴</el-button>
+  </div>
+  <!-- 修改文件名弹窗 -->
+
 </template>
 
 <script lang="ts" setup>
@@ -42,12 +43,9 @@ import { ref, reactive, defineEmits, onMounted, computed, watch } from 'vue'
 import { autoMatchIcon } from '../../tools/file-auto-type-url'
 import { useStore } from 'vuex'
 import { ElMessage } from 'element-plus'
+import { reFName } from '@/api/file'
 const store = useStore()
-// const queryData = reactive({
-//   parentDir: '/' + store.state.userdata.fileGroup,
-//   search: store.state.search,
-//   type: store.state.type
-// })
+
 onMounted(() => {
   store.commit('updateQueryFile', '/' + store.state.userdata.fileGroup)
 })
@@ -105,6 +103,48 @@ const selectionChangeHandle = (val:Array<object>) => {
   console.log(store.state.selectedFilelist)
   emit('selected-file-change', sCHData)
 }
+// 右键菜单
+const menuVisible = ref(false)
+const rightClick = (key:any, data:any) => {
+  if (data.children && data.children != null) {
+    menuVisible.value = false
+  } else {
+    menuVisible.value = false // 先把模态框关死，目的是 第二次或者第n次右键鼠标的时候 它默认的是true
+    menuVisible.value = true // 显示模态窗口，跳出自定义菜单栏
+    key.preventDefault() // 关闭浏览器右键默认事件,key就相当于event
+    console.log(data.row.fname)
+    const menu = document.querySelector('.menu')
+    rNameData.fid = data.row.fid
+    // rNameData.fName = data.row.fname
+    styleMenu(key, menu)
+  }
+}
+
+const styleMenu = (key:any, menu:any) => {
+  document.addEventListener('click', foo) // 给整个document新增监听鼠标事件，点击任何位置执行foo方法
+  console.log(key.clientX)
+  menu.style.left = key.clientX + 15 + 'px'
+  menu.style.top = key.clientY + 'px'
+}
+const foo = () => {
+  // 取消鼠标监听事件 菜单栏
+  menuVisible.value = false
+  document.removeEventListener('click', foo) // 关掉监听，
+}
+// 重命名文件
+const rNameData = reactive({
+  fid: '',
+  fName: '修改后的图片文件名.png'
+})
+const rName = () => {
+  reFName(rNameData).then(res => {
+    if (res.data === '修改成功') {
+      ElMessage.success('重命名成功')
+    } else {
+      ElMessage.error('操作失败')
+    }
+  })
+}
 </script>
 
 <style lang="less" scoped>
@@ -127,6 +167,27 @@ const selectionChangeHandle = (val:Array<object>) => {
     white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  }
+}
+.menu {
+  position: absolute;
+  background-color: #fff;
+  width: 90px;
+  font-size: 12px;
+  color: #444040;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-radius: 7px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  white-space: nowrap;
+  z-index: 1000;
+  .menu-button{
+    display: block;
+    width: 90px;
+    color: rgb(46, 51, 77);
+    text-align: center;
+    margin: 0;
   }
 }
 </style>

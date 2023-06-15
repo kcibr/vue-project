@@ -7,7 +7,7 @@
   <div class="file-tools-select" v-if="!props.isSelected">
     <el-button type="primary" text @click="fileDownload(store.state.selectedFilelist)"><el-icon><Download/></el-icon>&nbsp;下载</el-button>|
     <el-button type="primary" text @click="deleteFiles()"><el-icon><Delete/></el-icon>&nbsp;删除</el-button>|
-    <el-button type="primary" text><el-icon><Switch/></el-icon>&nbsp;移动</el-button>|
+    <el-button type="primary" text><el-icon><Switch/></el-icon>&nbsp;剪切</el-button>|
     <el-button type="primary" text><el-icon><DocumentCopy/></el-icon>&nbsp;复制</el-button>|
     <el-button type="primary" text><el-icon><DocumentRemove/></el-icon>&nbsp;重命名</el-button>
   </div>
@@ -19,7 +19,7 @@
       :prefix-icon="Search"
     >
     <template #append>
-      <el-button type="primary" text style="background-color: rgb(240, 250, 255);">搜索</el-button>
+      <el-button type="primary" text style="background-color: rgb(240, 250, 255);" @click="searchFile()">搜索</el-button>
     </template>
     </el-input>
   </div>
@@ -94,7 +94,7 @@ import { defineProps, reactive, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { newFolder, fileDownload, deleteFile } from '../../api/file'
 import { useStore } from 'vuex'
-import { Action, ElMessage, ElMessageBox, MessageParamsWithType, UploadInstance, UploadUserFile } from 'element-plus'
+import { ElMessage, ElMessageBox, UploadInstance, UploadUserFile } from 'element-plus'
 import axios from 'axios'
 // import { ElMessageBox } from 'element-plus'
 const store = useStore()
@@ -106,10 +106,6 @@ const props = defineProps({
 // 上传文件
 const updateDialogVisible = ref(false)
 const fileList = ref<UploadUserFile[]>([])
-// const uploadData = ref({
-//   uploadFolderPath: '/' + store.state.userdata.fileGroup,
-//   fileGroup: store.state.userdata.fileGroup
-// })
 const fileChange = (fileList:any) => {
   if (fileList.length >= 9) {
     ElMessageBox.alert('单次上传最多上传9个文件，且文件大小不得超过100MB', '提示', {
@@ -175,6 +171,12 @@ const createFolder = () => {
     })
   }
 }
+// 搜索文件
+const searchFile = () => {
+  store.commit('updateSearch', search.value)
+  store.commit('updateQueryFile', '/' + store.state.userdata.fileGroup)
+}
+// 删除文件
 const deleteFiles = () => {
   ElMessageBox.confirm(
     '是否删除这些文件？',
@@ -187,7 +189,7 @@ const deleteFiles = () => {
   )
     .then(() => {
       const arr:Array<string> = []
-      store.state.selectedFilelist.forEach(item => {
+      store.state.selectedFilelist.forEach((item: { fid: string }) => {
         arr.push(item.fid)
       })
       const data:any = {

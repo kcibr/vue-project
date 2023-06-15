@@ -11,3 +11,6 @@ export interface LoginRes {
 export function doLogin (data: LoginData) {
   return axios.get('/user/login', data)
 }
+export function doRegister (data: LoginData) {
+  return axios.get('/user/register', data)
+}
